@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Recording and Upload</title>
+</head>
+<body>
+
+<script>
+  function startRecording() {
+    const constraints = { audio: true };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        const mediaRecorder = new MediaRecorder(stream);
+        let chunks = [];
+
+        // 録音開始
+        mediaRecorder.start();
+
+        // 10秒後に録音停止
+        setTimeout(() => {
+          mediaRecorder.stop();
+        }, 10000);
+
+        // データが溜まる度に呼ばれる
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            chunks.push(event.data);
+          }
+        };
+
+        // 録音停止時の処理
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/wav' });
+
+          // ファイルをHTTPサーバにアップロード
+          uploadAudio(blob);
+          
+          // 1に戻る（再帰）
+          startRecording();
+        };
+      })
+      .catch((error) => {
+        console.error('Error accessing microphone:', error);
+      });
+  }
+
+  function uploadAudio(blob) {
+    const url = 'https://192.168.122.247:8001/upload/file.wav'; // あなたのHTTPサーバのエンドポイントに置き換えてください
+
+    const formData = new FormData();
+//    formData.append('audio', blob, 'recording.wav');
+
+    fetch(url, {
+      method: 'PUT',
+//      body: formData,
+      body: blob,
+      // 自己証明書を無視するための追加オプション(本番環境ではもちろん推奨されない)
+      mode: 'cors',
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Upload success:', data);
+    })
+    .catch(error => {
+      console.error('Upload error:', error);
+    });
+  }
+
+  // 初回録音開始
+  startRecording();
+</script>
+
+</body>
+</html>
+
