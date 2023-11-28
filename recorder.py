@@ -6,29 +6,13 @@ import ssl
 import os
 import sys
 from http.server import HTTPServer, CGIHTTPRequestHandler
+# settting of import messaging
+sys.path.append("messaging")
+from messaging import *
 
 CERTFILE = "./localhost.pem"
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(CERTFILE)
-
-#settting of import messaging
-sys.path.append("messaging")
-from messaging import *
-
-# def queue_message(data):
-#     ip = os.environ["LLM_SVC_QUEUE_SERVER_IP"]
-#     port = os.environ["LLM_SVC_QUEUE_SERVER_PORT"]
-#     path = os.environ["LLM_SVC_QUEUE_SERVER_PATH"]
-#     user = os.environ["LLM_SVC_QUEUE_SERVER_USER"]
-#     passwd = os.environ["LLM_SVC_QUEUE_SERVER_PASSWD"]
-#     credentials = pika.PlainCredentials(user, passwd)
-#     connection = pika.BlockingConnection(
-#         pika.ConnectionParameters(ip, port, path, credentials)
-#     )
-#     channel = connection.channel()
-#     channel.queue_declare(queue='hello')
-#     channel.basic_publish(exchange='', routing_key='hello', body=data)
-#     connection.close()
 
 
 def queue_message(data):
