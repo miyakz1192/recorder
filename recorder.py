@@ -16,7 +16,8 @@ context.load_cert_chain(CERTFILE)
 
 
 def queue_message(data):
-    RecoderServiceMessaging().connect_and_basic_publish(data)
+    rec = RawAudioRecord(data)
+    RecoderServiceMessaging().connect_and_basic_publish_record(rec)
 
 
 class MyHandler(CGIHTTPRequestHandler):
