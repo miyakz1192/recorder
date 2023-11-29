@@ -1,6 +1,6 @@
 import pika
 
-import os 
+import os
 ip = os.environ["LLM_SVC_QUEUE_SERVER_IP"]
 port = os.environ["LLM_SVC_QUEUE_SERVER_PORT"]
 path = os.environ["LLM_SVC_QUEUE_SERVER_PATH"]
@@ -13,11 +13,13 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 channel.queue_declare(queue='hello')
 
+
 def callback(ch, method, properties, body):
     print("Received len = ", len(body))
     ch.basic_ack(delivery_tag=method.delivery_tag)
     with open("/tmp/sample.wav", 'wb') as f:
-        f.write(body) 
+        f.write(body)
+
 
 # basic_getを使用してメッセージを一度だけ取り出す
 method_frame, header_frame, body = channel.basic_get(queue='hello')
@@ -30,4 +32,3 @@ else:
 
 # 接続を閉じる
 connection.close()
-
