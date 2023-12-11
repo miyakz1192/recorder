@@ -1,0 +1,10 @@
+[Unit]
+Description=Advice Service Recorder HTTPS Server
+
+[Service]
+ExecStart=/home/miyakz/recorder/boot_httpd_server.sh
+Restart=always
+User=miyakz
+
+[Install]
+WantedBy=multi-user.target

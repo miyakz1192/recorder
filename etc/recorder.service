@@ -1,0 +1,10 @@
+[Unit]
+Description=Advice Service Recorder
+
+[Service]
+ExecStart=/home/miyakz/recorder/boot_recorder.sh
+Restart=always
+User=miyakz
+
+[Install]
+WantedBy=multi-user.target
