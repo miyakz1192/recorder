@@ -19,10 +19,10 @@
         // 録音開始
         mediaRecorder.start();
 
-        // 10秒後に録音停止
+        // 60秒後に録音停止
         setTimeout(() => {
           mediaRecorder.stop();
-        }, 10000);
+        }, 60000);
 
         // データが溜まる度に呼ばれる
         mediaRecorder.ondataavailable = (event) => {
