@@ -7,14 +7,28 @@
 </head>
 <body>
 
+<button onclick="startRecording()">録音開始</button>
+<select id="audioDevices"></select>
+
 <script>
   function startRecording() {
-    const constraints = { audio: true };
+//    alert("startRecording!")
+    const audioDevicesSelect = document.getElementById('audioDevices');
+    const selectedDeviceId = audioDevicesSelect.value;
+
+    if (!selectedDeviceId) {
+      alert('Please select an audio device before starting recording.');
+      return;
+    }
+
+    const constraints =  { audio: { deviceId: selectedDeviceId } };
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         const mediaRecorder = new MediaRecorder(stream);
         let chunks = [];
+
+//        alert("録音開始しました!")
 
         // 録音開始
         mediaRecorder.start();
@@ -43,7 +57,8 @@
         };
       })
       .catch((error) => {
-        console.error('Error accessing microphone:', error);
+        console.error('Error accessing microphone:' +  error.message);
+        alert("error:" +  error.message)
       });
   }
 
@@ -69,8 +84,30 @@
     });
   }
 
-  // 初回録音開始
-  startRecording();
+  function updateDeviceList() {
+    const devicesSelect = document.getElementById('audioDevices');
+    devicesSelect.innerHTML = '<option value="">デバイスを選択</option>';
+
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        devices.forEach(device => {
+          if (device.kind === 'audioinput') {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || `Microphone ${devicesSelect.options.length}`;
+            devicesSelect.appendChild(option);
+          //  alert("device=" + option.text + " ; " + device.kind)
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error enumerating devices:', error);
+      });
+  }
+
+  // 初回録音開始(->録音ボタン押下時に開始するように変更)
+  // startRecording();
+  updateDeviceList()
 </script>
 
 </body>
